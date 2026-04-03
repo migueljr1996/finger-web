@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
+import packageJson from '../package.json';
 // Simplistic icons for premium feel
 const UsbIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -142,7 +142,13 @@ export default function Home() {
   return (
     <main className="container">
       <div className="header">
-        <h1>WebUSB Fingerprint</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+          <h1>WebUSB Fingerprint</h1>
+          <span style={{ fontSize: '0.75rem', padding: '4px 10px', borderRadius: '999px', backgroundColor: '#334155', color: '#94a3b8', fontWeight: 600, border: '1px solid #475569' }}>
+            v{packageJson.version} 
+            {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ? ` - ${process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA.substring(0, 7)}` : ' - dev'}
+          </span>
+        </div>
         <p>Detector biométrico y explorador WebUSB</p>
       </div>
 
