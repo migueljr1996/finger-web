@@ -126,11 +126,9 @@ export default function Home() {
       // Simulamos la duración de la captura de datos (para efecto visual)
       await new Promise(r => setTimeout(r, 2000));
       
-      // En un integrador real, aquí se usaría device.transferIn y device.transferOut
-      // con los comandos binarios específicos de la marca del huellero.
-      
-      // Generamos un SVG decorativo para simular la vista previa de la huella
-      const svgBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2310b981'><path d='M50 10C27.9 10 10 27.9 10 50s17.9 40 40 40 40-17.9 40-40S72.1 10 50 10zm0 70C33.4 80 20 66.6 20 50S33.4 20 50 20s30 13.4 30 30-13.4 30-30 30z'/><path d='M50 30c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20zm0 30c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10z'/></svg>";
+      // Simulamos la duración de la captura de datos (para efecto visual)
+      // Generamos un SVG decorativo con forma de huella para simular la vista previa
+      const svgBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' preserveAspectRatio='xMidYMid meet' width='100%' height='100%'><path d='M2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2'/><path d='M5 12C5 15.8 8.1 19 12 19C15.8 19 19 15.8 19 12C19 8.1 15.8 5 12 5'/><path d='M8 12C8 14.2 9.8 16 12 16C14.2 16 16 14.2 16 12C16 9.8 14.2 8 12 8'/></svg>";
       
       setScanData(svgBase64);
     } catch (err: any) {
