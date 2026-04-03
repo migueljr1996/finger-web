@@ -21,10 +21,20 @@ const AlertIcon = () => (
   </svg>
 );
 
+const FingerprintIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2"/>
+    <path d="M5 12C5 15.8 8.1 19 12 19C15.8 19 19 15.8 19 12C19 8.1 15.8 5 12 5"/>
+    <path d="M8 12C8 14.2 9.8 16 12 16C14.2 16 16 14.2 16 12C16 9.8 14.2 8 12 8"/>
+  </svg>
+);
+
 export default function Home() {
   const [isSupported, setIsSupported] = useState<boolean>(true);
   const [device, setDevice] = useState<USBDevice | null>(null);
   const [error, setError] = useState<string>('');
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [scanData, setScanData] = useState<string | null>(null);
 
   useEffect(() => {
     // Validar en el cliente
@@ -88,6 +98,46 @@ export default function Home() {
       } else {
         setError(`Error al solicitar dispositivo: ${err.message}`);
       }
+    }
+  };
+
+  const scanFingerprint = async () => {
+    if (!device) return;
+    setIsScanning(true);
+    setError('');
+    setScanData(null);
+    try {
+      if (!device.opened) {
+        await device.open();
+      }
+      if (device.configuration === null) {
+        await device.selectConfiguration(1);
+      }
+      
+      // Simular intento de reclamar la interfaz
+      try {
+        if (device.configuration && device.configuration.interfaces[0]) {
+          await device.claimInterface(device.configuration.interfaces[0].interfaceNumber);
+        }
+      } catch (e) {
+        console.warn("No se pudo reclamar la interfaz (podría estar ya reclamada)", e);
+      }
+      
+      // Simulamos la duración de la captura de datos (para efecto visual)
+      await new Promise(r => setTimeout(r, 2000));
+      
+      // En un integrador real, aquí se usaría device.transferIn y device.transferOut
+      // con los comandos binarios específicos de la marca del huellero.
+      
+      // Generamos un SVG decorativo para simular la vista previa de la huella
+      const svgBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%2310b981'><path d='M50 10C27.9 10 10 27.9 10 50s17.9 40 40 40 40-17.9 40-40S72.1 10 50 10zm0 70C33.4 80 20 66.6 20 50S33.4 20 50 20s30 13.4 30 30-13.4 30-30 30z'/><path d='M50 30c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20zm0 30c-5.5 0-10-4.5-10-10s4.5-10 10-10 10 4.5 10 10-4.5 10-10 10z'/></svg>";
+      
+      setScanData(svgBase64);
+    } catch (err: any) {
+      console.error(err);
+      setError(`Error al escanear: ${err.message}`);
+    } finally {
+      setIsScanning(false);
     }
   };
 
@@ -164,8 +214,33 @@ export default function Home() {
               </span>
             </div>
           </div>
+          </div>
+
+          {device && (
+            <div className="scan-section">
+              <button 
+                className="btn" 
+                onClick={scanFingerprint}
+                disabled={isScanning}
+                style={{ backgroundColor: isScanning ? '#475569' : '#10b981' }}
+              >
+                <FingerprintIcon />
+                {isScanning ? 'Escaneando...' : 'Escanear Huella'}
+              </button>
+              
+              <div className="preview-container">
+                {isScanning && <div className="scan-animation"></div>}
+                {scanData ? (
+                  <img src={scanData} alt="Preview de Huella" />
+                ) : (
+                  <div className="placeholder-text">
+                    {isScanning ? 'Coloca tu dedo...' : 'La huella aparecerá aquí'}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
     </main>
   );
 }
